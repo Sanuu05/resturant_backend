@@ -212,7 +212,7 @@ route.post("/success",auth ,async (req, res) => {
 
         })
         const buyitem={
-            data: {list:req.body.totaldata.totalcart,trackid:saveorder?.id,ordertime:time}
+            data: {list:req.body.totaldata.totalcart,trackid:saveorder?.id,ordertime:time,total:req.body.totaldata.total}
         }
         const buyitems = await Normal.findByIdAndUpdate(req.user, {
             $push: {
@@ -267,7 +267,9 @@ route.get('/trackorder/:id', async (req, res) => {
 })
 route.patch('/orderedit/:id',async(req,res)=>{
     try {
-        const findedit = await Order.findByIdAndUpdate(req.params.id,req.body)
+        // console.log("ddd",req.body)
+        const time = new Date().toLocaleString()
+        const findedit = await Order.findByIdAndUpdate(req.params.id,{...req.body,deliverytime:req.body?.delivered?time:null})
         res.json(findedit)
     } catch (error) {
         console.log('error')

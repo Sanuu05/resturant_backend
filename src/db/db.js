@@ -26,11 +26,11 @@ db.once('open', () => {
     const pdtcollection = db.collection('products')
     const changeStream = pdtcollection.watch()
     changeStream.on('change', (change) => {
-        console.log(change)
+        // console.log(change)
         if (change.operationType === "insert") {
             const detail = change.fullDocument;
             pusher.trigger('product', 'inserted', {
-                name: detail.name
+                name: detail._id
             })
         }
         if (change.operationType === 'delete') {
@@ -47,28 +47,85 @@ db.once('open', () => {
                 img: update.updatedFields.productimg
             })
         }
-        
-       
 
-        })
-        const querycollection = db.collection('queries')
-        const changeQStream = querycollection.watch()
-        changeQStream.on('change', (change) => {
-            // console.log(change)
-            if (change.operationType === "insert") {
-                const detail = change.fullDocument;
-                pusher.trigger('query', 'qinserted', {
-                    name: detail
-                })
-            }
-            if (change.operationType === 'delete') {
-                const del = change.documentKey;
-                pusher.trigger('delproduct', 'qdeleted', {
-                    id: del._id
-                })
-    
-            }
-        })
+
 
     })
+    const querycollection = db.collection('tproducts')
+    const changeQStream = querycollection.watch()
+    changeQStream.on('change', (change) => {
+        // console.log("newchange",change)
+        if (change.operationType === "insert") {
+            const detail = change.fullDocument;
+            pusher.trigger('tpdt', 'tpdtinsrt', {
+                name: detail
+            })
+        }
+        if (change.operationType === 'delete') {
+            const del = change.documentKey;
+            pusher.trigger('deltpdt', 'deltpdtinsrt', {
+                id: del._id
+            })
+
+        }
+    })
+
+    const cartcollection = db.collection('carts')
+    const changeStreamcart = cartcollection.watch()
+    changeStreamcart.on('change', (change) => {
+        // console.log(change)
+        if (change.operationType === "insert") {
+            const detail = change.fullDocument;
+            pusher.trigger('cart', 'inserted', {
+                name: detail._id
+            })
+        }
+        if (change.operationType === 'delete') {
+            const del = change.documentKey;
+            pusher.trigger('carts', 'deleted', {
+                id: del._id
+            })
+
+        }
+        if (change.operationType === 'update') {
+            const update = change.updateDescription;
+            pusher.trigger('cartd', 'updated', {
+                upd: update.updatedFields,
+                img: update.updatedFields.productimg
+            })
+        }
+
+
+
+    })
+
+    const ordercollection = db.collection('orders')
+    const changeStreamorder = ordercollection.watch()
+    changeStreamorder.on('change', (change) => {
+        console.log(change)
+        if (change.operationType === "insert") {
+            const detail = change.fullDocument;
+            pusher.trigger('order', 'inserted', {
+                name: detail._id
+            })
+        }
+        if (change.operationType === 'delete') {
+            const del = change.documentKey;
+            pusher.trigger('orders', 'deleted', {
+                id: del._id
+            })
+
+        }
+        if (change.operationType === 'update') {
+            const update = change.updateDescription;
+            pusher.trigger('orderd', 'updated', {
+                upd: update.updatedFields
+            })
+        }
+
+
+
+    })
+
+})
 
