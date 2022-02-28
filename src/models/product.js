@@ -28,6 +28,18 @@ const productSchema = mongoose.Schema({
     nveg:{
         type:Boolean,
         default:true
+    },
+    popular:{
+        type:Boolean,
+        default:true
+    },
+    special:{
+        type:Boolean,
+        default:true
+    },
+    chef:{
+        type:Boolean,
+        default:true
     }
 })
 

@@ -44,13 +44,14 @@ route.get('/getitem/:id', async(req,res)=>{
         const get = await Product.findById(req.params.id)
         res.json(get)
     } catch (error) {
-        console.log(error)
+        console.log(error) 
     }
 })
 route.patch('/edit/:id', async(req,res)=>{
-    console.log(req.body)
+    console.log("cc",req.body)
     try {
-        const update = await Product.findByIdAndUpdate(req.params.id, req.body)
+        const update = await Product.findByIdAndUpdate(req.params.id, req.body,{new:true})
+        console.log(update)
     } catch (error) {
         console.log(error)
     }
