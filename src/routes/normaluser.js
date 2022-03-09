@@ -159,7 +159,7 @@ route.post('/sorder', async(req,res)=>{
     try {
         const {amount} = req.body
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: Math.round(amount * 100),
+            amount: Math.round((amount*0.05) * 100),
             currency: "INR",
             payment_method_types: ["card"],
             // metadata: { name },
