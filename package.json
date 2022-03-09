@@ -19,6 +19,7 @@
     "mongoose": "^5.11.15",
     "pusher": "^5.0.0",
     "razorpay": "^2.8.0",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "stripe": "^8.207.0"
   }
 }

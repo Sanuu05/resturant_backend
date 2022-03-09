@@ -8,6 +8,10 @@ const Razorpay = require("razorpay");
 const crypto = require('crypto')
 const Order = require('../models/Order')
 const Productdetail = require('../models/product')
+const Stripe = require('stripe')
+const stripe = Stripe("sk_test_51IAFjHFZnHGlURw8uac7QJJwvhKFZJsEAnYU1RUziWv3YlJb7EsbUhBeX9Bd5oGj05eiXdKh1S3uIHwxNMsBETVm000Ml6AxPM",{
+    apiVersion:"2020-08-27"
+})
 
 // signup 
 route.get('/',()=>{
@@ -71,7 +75,7 @@ route.post('/signup', async (req, res) => {
 
 route.post('/login', async (req, res) => {
     try {
-        // console.log(req.body)
+        console.log(req.body)
         const { email, password } = req.body
         if (!email) {
             return res.status(400).json({
@@ -151,6 +155,26 @@ route.post("/orders", async (req, res) => {
         res.status(500).send(error);
     }
 });
+route.post('/sorder', async(req,res)=>{
+    try {
+        const {amount} = req.body
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: Math.round(amount * 100),
+            currency: "INR",
+            payment_method_types: ["card"],
+            // metadata: { name },
+          });
+          const clientSecret = paymentIntent.client_secret;
+          // Sending the client secret as response
+          res.json({ message: "Payment initiated", clientSecret });
+          console.log('vvvcc',clientSecret)
+        
+    } catch (error) {
+        console.error(err);
+    res.status(500).json({ message: "Internal Server Error" });
+        
+    }
+})
 route.post("/success",auth ,async (req, res) => {
     try {
         // getting the details back from our font-end
@@ -169,7 +193,7 @@ route.post("/success",auth ,async (req, res) => {
 
         const digest = shasum.digest("hex");
 
-        // // comaparing our digest with the actual signature
+        // comaparing our digest with the actual signature
         if (digest !== razorpaySignature)
             return res.status(400).json({ msg: "Transaction not legit!" });
         const time = new Date().toLocaleString()
@@ -228,6 +252,82 @@ route.post("/success",auth ,async (req, res) => {
         });
     } catch (error) {
         res.status(500).send(error);
+    }
+});
+route.post("/successnew",auth ,async (req, res) => {
+    try {
+        // getting the details back from our font-end
+        // console.log("sucess", req.body)
+        // const {
+        //     orderCreationId,
+        //     razorpayPaymentId,
+        //     razorpayOrderId,
+        //     razorpaySignature,
+        // } = req.body;
+        // console.log(req.body.totaldata.totalcart
+        //     )
+
+        // const shasum = crypto.createHmac("sha256", "dbY34WVDWmoEItESZTx3qWMV");
+        // shasum.update(`${orderCreationId}|${razorpayPaymentId}`);
+
+        // const digest = shasum.digest("hex");
+
+        // // comaparing our digest with the actual signature
+        // if (digest !== razorpaySignature)
+        //     return res.status(400).json({ msg: "Transaction not legit!" });
+        const time = new Date().toLocaleString()
+        const neworder = new Order({
+            customerDetail:req.body.user,
+            customerOrder:req.body.cart,
+            totolPrice:req.body.total,
+            paymentstatus:true,
+            ordertime:time
+        })
+        const saveorder = await neworder.save()
+        const buyuser = await Normal.findById(req.user)
+        const buyer = {
+            by: buyuser
+        }
+        req.body.cart.map(async (val, index) => {
+            // console.log(val)
+
+            const user = await Productdetail.findById(val.cartitem)
+            const update = await Productdetail.findByIdAndUpdate(val.cartitem, {
+                stock: user.stock - val.qyt
+            }, { new: true })
+            const paybuyer = await Productdetail.findByIdAndUpdate(val.cartitem, {
+                $push: {
+                    buyer: buyer
+                }
+            })
+            // const buyitem={
+            //     data: {...val,trackid:saveorder?.id}
+            // }
+            // const buyitems = await Normal.findByIdAndUpdate(req.user, {
+            //     $push: {
+            //         buyitem: buyitem
+            //     }
+            // },{
+            //     new:true
+            // })
+            // console.log(buyitems)
+            // console.log(index,user)
+
+        })
+        const buyitem={
+            data: {list:req.body.cart,trackid:saveorder?.id,ordertime:time,total:req.body.total}
+        }
+        const buyitems = await Normal.findByIdAndUpdate(req.user, {
+            $push: {
+                buyitem: buyitem
+            }
+        },{
+            new:true
+        })
+        res.json("success");
+    } catch (error) {
+        res.status(500).send(error);
+        console.log('err',error)
     }
 });
 route.get('/orderitem',auth, async(req,res)=>{
