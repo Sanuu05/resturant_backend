@@ -9,7 +9,7 @@ const pusher = new Pusher({
     useTLS: true
 });
 
-mongoose.connect(" mongodb+srv://sanz:sannu05@cluster0.s5xci.mongodb.net/foodooze?retryWrites=true&w=majority",
+mongoose.connect(process.env.MONGO,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,

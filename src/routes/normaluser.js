@@ -99,7 +99,7 @@ route.post('/login', async (req, res) => {
                 msg: "details doesnt match"
             })
         }
-        const token = await jwt.sign({ id: exuser._id }, "sdsdsadhjhdjdkjsakdsajbdhsahdgsahgdshd")
+        const token = await jwt.sign({ id: exuser._id }, process.env.SEC_KEY)
         // console.log(token)
         exuser.password = undefined
         console.log(token)
