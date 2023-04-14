@@ -9,6 +9,6 @@ route.get('/getitem/:id',getDataById)
 route.patch('/edit/:id',editProduct)
 route.post('/tproduct',addTopProduct)
 route.get('/tproduct',getTopProduct)
-// route.delete('/tproduct/:id',deleteTopProduct)
+route.delete('/tproduct/:id',deleteTopProduct)
 
 module.exports = route
