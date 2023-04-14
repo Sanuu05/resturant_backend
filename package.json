@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.js"
+    "start": "node src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,10 @@
     "mongoose": "^5.11.15",
     "pusher": "^5.0.0",
     "razorpay": "^2.8.0",
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 979c96bbb093254f1cae861439fee16351e5a017
     "stripe": "^8.207.0"
   }
 }
