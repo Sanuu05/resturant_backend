@@ -9,7 +9,7 @@ exports.addCart= async (req, res) => {
         const cartuser = await Cart.findOne({ by: req.user })
         if (cartuser) {
             const product = req.body.cart.cartitem
-            tuser.cart.find(c => c.cartitem == product)
+            const item = user.cart.find(c => c.cartitem == product)
             if (item) {
                 const excart = await Cart.findOneAndUpdate({ "by": req.user, "cart.cartitem": product }, {
                     $set: {
